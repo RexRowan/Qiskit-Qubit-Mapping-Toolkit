@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [0.1.0] - 2026-08-15
+## [0.1.1] - 2026-08-15
 
 ### Added
 - `IsomorphismLayout`: VF2 subgraph-isomorphism-based initial layout, with degree-greedy fallback when no exact zero-SWAP embedding exists.
