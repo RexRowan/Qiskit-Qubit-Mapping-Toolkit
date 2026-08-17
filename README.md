@@ -1,4 +1,4 @@
-# qiskit-qubit-mapping-toolkit
+# Qiskit Qubit Mapping Toolkit
 
 Graph-theoretic **initial layout** and **routing** heuristics for mapping logical Qiskit circuits onto hardware coupling maps.
 
