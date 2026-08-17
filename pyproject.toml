@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qiskit-qubit-mapping-toolkit"
+version = "0.1.0"
+description = "Graph-theoretic initial layout and routing heuristics for mapping Qiskit circuits onto hardware coupling maps."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+authors = [
+    { name = "Rex Rowan" }
+]
+keywords = ["qiskit", "quantum computing", "transpiler", "qubit mapping", "routing", "graph theory"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+    "qiskit>=2.0,<3",
+    "networkx>=3.0",
+    "numpy>=1.24",
+    "scipy>=1.10",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0"]
+dev = ["pytest>=7.0", "ruff", "black"]
+
+[project.urls]
+Homepage = "https://github.com/RexRowan/qiskit-qubit-mapping-toolkit"
+Repository = "https://github.com/RexRowan/qiskit-qubit-mapping-toolkit"
+Issues = "https://github.com/RexRowan/qiskit-qubit-mapping-toolkit/issues"
+
+[project.entry-points."qiskit.transpiler.layout"]
+qqm_isomorphism = "qiskit_qubit_mapping.plugins:IsomorphismLayoutPlugin"
+qqm_walk_based = "qiskit_qubit_mapping.plugins:WalkBasedLayoutPlugin"
+
+[project.entry-points."qiskit.transpiler.routing"]
+qqm_baseline = "qiskit_qubit_mapping.plugins:BaselineSwapRouterPlugin"
+qqm_lookahead = "qiskit_qubit_mapping.plugins:LookaheadSwapRouterPlugin"
+
+[tool.setuptools.packages.find]
+include = ["qiskit_qubit_mapping*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
