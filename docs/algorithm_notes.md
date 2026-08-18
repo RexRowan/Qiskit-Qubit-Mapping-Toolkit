@@ -37,30 +37,32 @@ The lookahead window is derived from a single global topological ordering of the
 
 Like the baseline, correctness is checked directly against ideal statevectors (`tests/test_lookahead_routing.py`), including on a denser random circuit exercising multiple sequential SWAP decisions in one run, and there's a direct regression test (`test_uses_fewer_or_equal_swaps_than_baseline_on_dense_circuit`) asserting it never does worse than the non-lookahead baseline.
 
-## Benchmark: toolkit vs. Sabre
+## Benchmark: toolkit vs. Sabre (LightSABRE)
 
-Measured with `qiskit_qubit_mapping.metrics.compare_to_sabre` on a 19-qubit heavy-hex(3) coupling map (`CouplingMap.from_heavy_hex(3)`), across circuits from `qiskit_qubit_mapping.benchmarks.circuits`, using `IsomorphismLayout` paired with each router:
+Measured with `qiskit_qubit_mapping.metrics.compare_to_sabre` on a 19-qubit heavy-hex(3) coupling map (`CouplingMap.from_heavy_hex(3)`), across circuits from `qiskit_qubit_mapping.benchmarks.circuits`, using `IsomorphismLayout` paired with each router.
+
+A note on what "Sabre" means here: as of Qiskit 1.2.0, `SabreLayout`/`SabreSwap` *is* [LightSABRE](https://arxiv.org/abs/2409.08368) (Zou, Treinish, Hartman, Ivrii, and Lishman, 2024) — the paper's improvements (relative/offset SWAP scoring, a Rust reimplementation, ~200× speedup, and an average 18.9% SWAP-count reduction over the original 2019 Li et al. SABRE algorithm) were merged directly into Qiskit's existing Sabre passes rather than shipped as a separate class. There is no separate "classic Sabre" left to compare against in any Qiskit version this project supports (`qiskit>=2.0,<3`) — every number below is against the LightSABRE-enhanced implementation, confirmed directly from the installed `SabreSwap` docstring during benchmarking.
 
 | Circuit | Layout + Router | SWAPs | Depth |
 |---|---|--:|--:|
 | Line | Isomorphism + Baseline | 10 | 46 |
 | Line | Isomorphism + Lookahead | **8** | **42** |
-| Line | Sabre | 12 | 45 |
+| Line | Sabre (LightSABRE) | 12 | 45 |
 | Ring | Isomorphism + Baseline | 13 | 51 |
 | Ring | Isomorphism + Lookahead | **10** | **45** |
-| Ring | Sabre | 15 | 50 |
+| Ring | Sabre (LightSABRE) | 15 | 50 |
 | Random sparse (n edges) | Isomorphism + Baseline | 29 | 33 |
 | Random sparse (n edges) | Isomorphism + Lookahead | 14 | 18 |
-| Random sparse (n edges) | Sabre | **11** | 18 |
+| Random sparse (n edges) | Sabre (LightSABRE) | **11** | 18 |
 | Random sparse (2n edges) | Isomorphism + Baseline | 75 | 83 |
 | Random sparse (2n edges) | Isomorphism + Lookahead | 48 | 43 |
-| Random sparse (2n edges) | Sabre | **45** | **33** |
+| Random sparse (2n edges) | Sabre (LightSABRE) | **45** | **33** |
 
 **Takeaways, stated plainly:**
 
 - `LookaheadSwapRouter` is a clear, consistent improvement over `BaselineSwapRouter` — fewer SWAPs and lower depth on every single case measured, sometimes by more than half (75 → 48 SWAPs on the densest case).
-- On structured circuits (line, ring) the toolkit's Isomorphism+Lookahead combination actually **beats** Sabre's SWAP count outright, because `IsomorphismLayout` starts from a layout Sabre has to converge toward iteratively.
-- On denser, less structured random circuits, Sabre still wins, but the gap that used to be large (29 vs. 11, 75 vs. 45 with the baseline router) is now much smaller (14 vs. 11, 48 vs. 45 with the lookahead router) — the remaining difference is mostly attributable to Sabre's bidirectional/iterative layout refinement, which this toolkit doesn't do (see Roadmap in the README).
+- On structured circuits (line, ring) the toolkit's Isomorphism+Lookahead combination actually **beats LightSABRE's** SWAP count outright, because `IsomorphismLayout` starts from a layout LightSABRE has to converge toward iteratively.
+- On denser, less structured random circuits, LightSABRE still wins, but the gap that used to be large (29 vs. 11, 75 vs. 45 with the baseline router) is now much smaller (14 vs. 11, 48 vs. 45 with the lookahead router) — the remaining difference is mostly attributable to LightSABRE's bidirectional/iterative layout refinement and multi-trial search, which this toolkit doesn't do (see Roadmap in the README).
 - `WalkBasedLayout` was not re-benchmarked with the lookahead router here; it underperformed `IsomorphismLayout` with the baseline router (see the prior version of this table in git history) and remains a starting point for further tuning rather than a recommended default.
 
 Reproduce this table with the snippet in `docs/usage.md`.
