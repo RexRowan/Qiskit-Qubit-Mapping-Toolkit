@@ -13,7 +13,7 @@ All four passes are also registered as **Qiskit transpiler stage plugins**, so t
 
 ## Honest framing
 
-This is a **research/pedagogical toolkit**, not a production replacement for Sabre. `BaselineSwapRouter` is a deliberately simple, easy-to-verify shortest-path SWAP inserter with no lookahead or SWAP-choice optimization — it exists as a correctness-first reference implementation so the *layout* heuristics can be measured on a level playing field, and as a floor to compare smarter routing against. `LookaheadSwapRouter` builds on that floor with a Sabre-style scoring function (front layer + weighted lookahead window) and closes most of the gap: on a 19-qubit heavy-hex topology it beats Sabre's SWAP count on structured circuits (line, ring) and comes within a few SWAPs on denser random circuits — see [`docs/algorithm_notes.md`](docs/algorithm_notes.md) for the full table. Where this toolkit wins outright regardless of router is on circuits whose interaction graph is exactly embeddable: `IsomorphismLayout` finds the zero-SWAP embedding directly rather than converging to it iteratively.
+This is a **research/pedagogical toolkit**, not a production replacement for Sabre — meaning Qiskit's own `SabreLayout`/`SabreSwap`, which since Qiskit 1.2.0 *is* the [LightSABRE](https://arxiv.org/abs/2409.08368) algorithm (Rust-reimplemented, relative-scoring SWAP search, ~200× faster and ~19% fewer SWAPs than the original 2019 Sabre paper). `BaselineSwapRouter` is a deliberately simple, easy-to-verify shortest-path SWAP inserter with no lookahead or SWAP-choice optimization — it exists as a correctness-first reference implementation so the *layout* heuristics can be measured on a level playing field, and as a floor to compare smarter routing against. `LookaheadSwapRouter` builds on that floor with a Sabre-style scoring function (front layer + weighted lookahead window) and closes most of the gap: on a 19-qubit heavy-hex topology it beats LightSABRE's SWAP count on structured circuits (line, ring) and comes within a few SWAPs on denser random circuits — see [`docs/algorithm_notes.md`](docs/algorithm_notes.md) for the full table. Where this toolkit wins outright regardless of router is on circuits whose interaction graph is exactly embeddable: `IsomorphismLayout` finds the zero-SWAP embedding directly rather than converging to it iteratively.
 
 ## Install
 
@@ -109,7 +109,7 @@ routed_circuit = pm.run(qc)
 | `qiskit_qubit_mapping.metrics` | `evaluate_layout()`, `compare_to_sabre()`, `EvaluationResult` |
 | `qiskit_qubit_mapping.benchmarks` | Small dependency-free benchmark circuit generators (line, ring, all-to-all, random-sparse) |
 
-See [`docs/usage.md`](docs/usage.md) for a full walkthrough of each heuristic, and [`docs/algorithm_notes.md`](docs/algorithm_notes.md) for the reasoning behind the CTQW scoring function and measured Sabre comparisons.
+See [`docs/usage.md`](docs/usage.md) for a full walkthrough of each heuristic, and [`docs/algorithm_notes.md`](docs/algorithm_notes.md) for the reasoning behind the CTQW scoring function and measured comparisons against Qiskit's LightSABRE-based `SabreLayout`/`SabreSwap`.
 
 ## Testing
 
