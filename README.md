@@ -1,5 +1,7 @@
 # Qiskit Qubit Mapping Toolkit
 
+[![Qiskit Ecosystem](https://qisk.it/e-4ab16aaa)](https://qisk.it/e)
+
 Graph-theoretic **initial layout** and **routing** heuristics for mapping logical Qiskit circuits onto hardware coupling maps.
 
 This project fills a gap in my own [Qiskit Ecosystem](https://www.ibm.com/quantum/ecosystem) portfolio: prior projects ([`qiskit-graph-walks`](https://github.com/RexRowan/qiskit-graph-walks), [`qiskit-zx-verified`](https://github.com/RexRowan/qiskit-zx-verified), [`qiskit-lean-bridge`](https://github.com/RexRowan/qiskit-lean-bridge), etc.) analyze, verify, or visualize circuits, but none of them touch the compilation/transpilation pipeline — getting a circuit *onto* real hardware efficiently. This toolkit is a first step into that space, built around two ideas:
